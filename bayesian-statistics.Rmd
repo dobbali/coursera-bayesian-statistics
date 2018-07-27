@@ -2,7 +2,9 @@
 title: "Bayesian-statistics"
 author: "Manoj"
 date: "7/23/2018"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ## Basics of Bayesian Statistics
@@ -15,8 +17,8 @@ Eg: False positive or False negative rates.
 
 Polls : Have you even used dating websites?
 
-![Bayes rule application.](cp.png)
-![Recalculating using bayes rule.](cp2.png)
+![Bayes rule application.](screen-shots/cp.png)
+![Recalculating using bayes rule.](screen-shots/cp2.png)
 
 ## Bayes Rule and Diagnostic Testing
 
@@ -37,7 +39,7 @@ Western blot
   
 prevalence : 1.48 / 1000 people p(HIV) = 0.0148 which is prior
 
-![Bayes-tree](bayes-tree.png)
+![Bayes-tree](screen-shots/bayes-tree.png)
 
 This updating scheme we have here is general property of the Bayesian models
 
@@ -148,7 +150,7 @@ H$_{2}$ : > 10% Yellow M&Ms
 priors : P(H1) = 0.5, p(H2) = 0.5
 obs. data : k = 1, n = 5
 
-```{r calculating-likelihood}
+```{r calculating-likelihood-2}
 
 p1 <- dbinom(1, 5, p = 0.1)
 p2 <- dbinom(1, 5, p = 0.2)
