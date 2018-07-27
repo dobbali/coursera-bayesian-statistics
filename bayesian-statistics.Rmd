@@ -1,0 +1,173 @@
+---
+title: "Bayesian-statistics"
+author: "Manoj"
+date: "7/23/2018"
+output: html_document
+---
+
+## Basics of Bayesian Statistics
+
+We can calcualte "What is the probability of event A given event B?"" using Bayesian. This is called conditional probablity 
+
+Eg: False positive or False negative rates.
+
+## Conditional Probability and Bayes' rule
+
+Polls : Have you even used dating websites?
+
+![Bayes rule application.](cp.png)
+![Recalculating using bayes rule.](cp2.png)
+
+## Bayes Rule and Diagnostic Testing
+
+US Militray early HIV testing in military 
+
+1. Elisa screen
+2. if positive, two more ELISA
+3. if either positive, two western blot assays
+4. if positive, HIV infection
+
+ELISA
+  -sensitivity (true positive): 93%  p(+/HIV) = 0.93
+  -specificity (true negative) : 99%  p(-/No HIV) = 0.99
+
+Western blot 
+  -sensitivity (true positive): 99.9% 
+  -specificity (true negative) : 99.1% 
+  
+prevalence : 1.48 / 1000 people p(HIV) = 0.0148 which is prior
+
+![Bayes-tree](bayes-tree.png)
+
+This updating scheme we have here is general property of the Bayesian models
+
+## Bayesian and Frequentist definitions of probabbility
+
+Frequentist: Its relative frequency in large number of trials
+Bayesian : Probability of an event happening is equated to another event
+
+Confidence Interval : The proportion of random samples of size n from the same population that produce confidence interval that contain the true population parameter. 
+
+Credible Interval : We can express the true parameter not as a fixed value but with a probablity 
+This will let us contruct something like a credible intervals expect we can make probabilistic statements about the paramenter falling within that range
+
+## Inference for proportions : 
+
+RU-486 effective or not?
+40 women are divided into two groups with one taking RU 486 and the other standard therapy.4/20 got pregnant where RU 486 used and 16/20 got pregnent where stadard methods are used. How strongly does the data indicate RU 486 is effective?
+This is a two proportion problem but we can frame it as one proportion test as following:
+How likely that 4 pregnencies occur in treatment group?
+
+### Frequentist Approach : 
+
+p = probability that a given pregnency comes from  a treatment group 
+
+H$_{0}$ : p = 0.5 - No difference, pregnency is equally likely to come from the treatment or control group
+
+H$_{A}$ : p > 0.5 - treatment is more effective, a pregnency is less likely to come from the treatment group
+
+Calculating P value: 
+
+k = 4, n = 20
+p = 0.5 assuming H$_{0}$ is true 
+
+We need to calulate the p-value as obtaining 4 or fewer success in 20 trails where probability of success is 0.5. The number of success in a fixed number of independent trails for a categorical variables with two levels follows a binomial distribution with two parameters. 
+
+p value = P(k<= 4)
+
+```{r calculating-pvalue}
+
+sum(dbinom(0:4, 20, 0.5))
+```
+
+With such a small probability, we reject the null hypothesis
+
+### Bayesian Approach : 
+
+Step 1: We have to create hypothesis or models. Let's assume p could be ranging from 10% to 90%. 
+p = 20% : Given a pregnency occurs there is a 1:4 chance that it will occur in the treatment group 
+
+Step 2: Set Priors. Use experience, previous experiments, research etc.,
+
+Step 3: Calculate Likelihood, P(data/model) = P(k = 4 | n = 20, p)
+
+```{r calculating-likelihood}
+
+p <- seq(from = 0.1, to = 0.9, by = 0.1)
+prior <- c(rep(0.06, 4), 0.52, rep(0.06,4))
+likelihood <- dbinom(4, size = 20, prob = p)
+
+```
+
+Step 4: Calculate Posterior, 
+
+p(model | data) = p(model & data) / p(data)
+
+= p(data | model) * p(model) / p(data)
+
+```{r calculating posterior}
+
+numerator <- prior * likelihood
+denominator <- sum(numerator)
+posterior <- numerator / denominator
+
+```
+
+## Effect of sample size on the posterior
+
+
+As we increase the sample size, there will be less variablity in the likelihood obtained from binomial distribution and hence posterior probability also becomes more certain
+
+## Frequentist vs Bayesian Inference: 
+
+M & Ms are either 10% or 20% in the population?
+
+### Frequentist Inference: 
+
+H$_{0}$ : 10% Yellow M&Ms
+H$_{A}$ : > 10% Yellow M&Ms
+
+We cannot set the value of alternate hypothesis equal to something 
+
+Significane level = 0.05, probability of rejecting a null hypothesis
+Sample : K = 1, n = 5
+
+```{r p-value}
+
+1 - dbinom(0, 5, prob = 0.10)
+
+```
+ 
+Fail to reject null hypothesis
+
+### Bayesian Inference: 
+
+H$_{1}$ : 10% Yellow M&Ms
+H$_{2}$ : > 10% Yellow M&Ms
+
+priors : P(H1) = 0.5, p(H2) = 0.5
+obs. data : k = 1, n = 5
+
+```{r calculating-likelihood}
+
+p1 <- dbinom(1, 5, p = 0.1)
+p2 <- dbinom(1, 5, p = 0.2)
+
+```
+
+```{r posterior-probability}
+
+prior <- 0.5
+Ph1_data <- prior * p1 / ( prior * p1 +  prior * p2)
+Ph2_data <- prior * p2 / ( prior * p1 +  prior * p2)
+
+```
+ 
+ We would pick 20 % in this case which is contridictory.  
+ 
+ 
+## Doubts
+
+What is likelihood in the Bayes tree? I think it is the sensitivity and specificity of the test.  
+
+
